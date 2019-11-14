@@ -1,0 +1,137 @@
+package khachhangmuon;
+
+import java.time.LocalDate;
+import java.util.Date;
+
+public class khachhangmuon {
+	private String makhhm;
+	private String sophieu;
+	private Date ngaythue;
+	private String manv;
+	private String mabangsach;
+	private String tenbangsach;
+	private String theloai;
+	private String tinhtrang;
+	private int soluong;
+	private int songaymuon;
+	private float dongia;
+	
+	public khachhangmuon() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	public khachhangmuon(String makhhm, String sophieu, Date ngaythue, String manv, String mabangsach,
+			String tenbangsach, String theloai, String tinhtrang, int soluong, int songaymuon, float dongia) {
+		super();
+		this.makhhm = makhhm;
+		this.sophieu = sophieu;
+		this.ngaythue = ngaythue;
+		this.manv = manv;
+		this.mabangsach = mabangsach;
+		this.tenbangsach = tenbangsach;
+		this.theloai = theloai;
+		this.tinhtrang = tinhtrang;
+		this.soluong = soluong;
+		this.songaymuon = songaymuon;
+		this.dongia = dongia;
+	
+	}
+//	public khachhangmuon(String makhm) {
+//		
+//		this(makhm,"",LocalDate.now(),"","","","","",0,0,(float) 0.0);
+//		
+//	}
+	public String getMakhhm() {
+		return makhhm;
+	}
+	public void setMakhhm(String makhhm) {
+		this.makhhm = makhhm;
+	}
+	public String getSophieu() {
+		return sophieu;
+	}
+	public void setSophieu(String sophieu) {
+		this.sophieu = sophieu;
+	}
+	public Date getNgaythue() {
+		return ngaythue;
+	}
+	public void setNgaythue(Date ngaythue) {
+		this.ngaythue = ngaythue;
+	}
+	public String getManv() {
+		return manv;
+	}
+	public void setManv(String manv) {
+		this.manv = manv;
+	}
+	public String getMabangsach() {
+		return mabangsach;
+	}
+	public void setMabangsach(String mabangsach) {
+		this.mabangsach = mabangsach;
+	}
+	public String getTenbangsach() {
+		return tenbangsach;
+	}
+	public void setTenbangsach(String tenbangsach) {
+		this.tenbangsach = tenbangsach;
+	}
+	public String getTheloai() {
+		return theloai;
+	}
+	public void setTheloai(String theloai) {
+		this.theloai = theloai;
+	}
+	public String getTinhtrang() {
+		return tinhtrang;
+	}
+	public void setTinhtrang(String tinhtrang) {
+		this.tinhtrang = tinhtrang;
+	}
+	public int getSoluong() {
+		return soluong;
+	}
+	public void setSoluong(int soluong) {
+		this.soluong = soluong;
+	}
+	public int getSongaymuon() {
+		return songaymuon;
+	}
+	public void setSongaymuon(int songaymuon) {
+		this.songaymuon = songaymuon;
+	}
+	public float getDongia() {
+		return dongia;
+	}
+	public void setDongia(float dongia) {
+		this.dongia = dongia;
+	}
+	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((makhhm == null) ? 0 : makhhm.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		khachhangmuon other = (khachhangmuon) obj;
+		if (makhhm == null) {
+			if (other.makhhm != null)
+				return false;
+		} else if (!makhhm.equals(other.makhhm))
+			return false;
+		return true;
+	}
+	
+}

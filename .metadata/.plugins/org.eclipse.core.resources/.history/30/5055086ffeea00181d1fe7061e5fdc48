@@ -1,0 +1,471 @@
+package khachhang;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+
+import Baomat.AppThe;
+import GiaoDien.AppThueSach2;
+import database.database;
+
+public class AppKhachHang extends JFrame implements ActionListener, MouseListener{
+
+	private String []gt = {"Nam", "Nữ"};
+	 private JTextField txtHoten, txtDienthoai, txtDiachi, txtsoCMND,txtmakh;
+	private JButton btnThem, btnSua, btnXoa, btnThoat, btnThe,btnluu,btnxoatrang;
+	private JComboBox cboGioitinh;
+	
+	private ArrayList<khachhang> list;
+	
+	JTable table;
+	private DefaultTableModel tableModel;
+	danhsachkhachhang dskhh=new danhsachkhachhang();
+	public AppKhachHang() {
+		setTitle("Khách hàng");
+		setBounds(180, 40,1000,650);
+		
+		
+		
+		JLabel lblTieude;
+		JPanel pnNorth = new JPanel();
+		add(pnNorth, BorderLayout.NORTH);
+		pnNorth.setBackground(Color.LIGHT_GRAY);
+		pnNorth.add(lblTieude = new JLabel("KHÁCH HÀNG"));
+		lblTieude.setFont(new Font("Arial", Font.BOLD, 30));
+		lblTieude.setForeground(Color.GRAY);
+		
+		JLabel lblhoten, lblgioitinh, lbldienthoai, lbldiachi, lblsoCMND,lblmakh;
+		JPanel pnWest = new JPanel();
+		add(pnWest, BorderLayout.WEST);
+		pnWest.setPreferredSize(new Dimension(410, 0));
+		pnWest.setBorder(BorderFactory.createTitledBorder("Thông tin chi tiết"));
+		pnWest.setBackground(Color.GRAY);
+		pnWest.setLayout(null);
+		
+		pnWest.add(lblmakh=new JLabel("MÃ kh:"));
+		
+		pnWest.add(lblhoten = new JLabel("Họ tên:"));
+		pnWest.add(lblgioitinh = new JLabel("Giới tính:"));
+		pnWest.add(lbldienthoai = new JLabel("Số DT:"));
+		pnWest.add(lbldiachi = new JLabel("Địa chỉ:"));
+		pnWest.add(lblsoCMND = new JLabel("Số CMND:"));
+		
+		pnWest.add(txtmakh=new JTextField());
+		pnWest.add(txtHoten = new JTextField());
+		pnWest.add(cboGioitinh = new JComboBox(gt));
+		pnWest.add(txtDienthoai = new JTextField());
+		pnWest.add(txtDiachi = new JTextField());
+		pnWest.add(txtsoCMND = new JTextField());
+		
+		lblmakh.setBounds(20, 20, 80,20);           txtmakh.setBounds(90,20,150,20);
+		lblhoten.setBounds(20, 60, 80, 20);			txtHoten.setBounds(90, 60, 150, 20);
+		lblgioitinh.setBounds(260, 60, 60, 20);		cboGioitinh.setBounds(330, 60, 60, 20);
+		lbldienthoai.setBounds(20, 100, 80, 20);		txtDienthoai.setBounds(90, 100, 310, 20);
+		lbldiachi.setBounds(20, 140, 80, 20);		txtDiachi.setBounds(90, 140, 310, 20);
+		lblsoCMND.setBounds(20, 180, 80, 20);		txtsoCMND.setBounds(90, 180, 310, 20);
+		
+		
+		JPanel pnsouth=new JPanel();
+		pnsouth.setPreferredSize(new Dimension(0,200));
+		pnsouth.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY)));
+		
+		
+		pnsouth.add(btnThem = new JButton("Thêm",new ImageIcon("them.png")));
+		
+		pnsouth.add(btnluu=new JButton("Lưu",new ImageIcon("luu.png")));
+		
+		pnsouth.add(btnSua = new JButton("Sửa",new ImageIcon("capnhat.png")));
+		
+		pnsouth.add(btnXoa = new JButton("Xóa",new ImageIcon("xoa.png")));
+		
+		//pnsouth.add(btnxoatrang=new JButton("Xóa Trắng",new ImageIcon("xoatrang.png")));
+		
+		
+		
+		pnsouth.add(btnThoat = new JButton("Thoát",new ImageIcon("thoat.png")));
+		
+		pnsouth.add(btnThe = new JButton("Thông tin thẻ",new ImageIcon("thongtinthe.png")));
+		
+		add(pnsouth,BorderLayout.SOUTH);
+
+		
+		JLabel lblanh=new JLabel();
+		lblanh.setLayout(null);
+		lblanh.setBounds(0, 50,1000,1000);
+		try {
+			BufferedImage image= ImageIO.read(new File("mau.png"));
+			int x=lblanh.getSize().width;
+			int y=lblanh.getSize().height;
+			int ix=image.getWidth();
+			int iy=image.getHeight();
+			int dx=0;
+			int dy=0;
+			if(x / y > ix / iy)
+			{
+				dy=y;
+				dx=dy * ix / iy;
+				
+			}
+			else {
+				dx=x;
+				dy=dx * iy / ix;
+			}
+			ImageIcon icon=new ImageIcon(image.getScaledInstance(dx, dy,image.SCALE_SMOOTH));
+			lblanh.setIcon(icon);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		pnsouth.add(lblanh);
+		
+		JPanel pnCenter = new JPanel();
+		add(pnCenter, BorderLayout.EAST);
+		
+		JScrollPane scroll;
+		String [] headers = "Ma Khh;Họ tên; Giới tính; Số điện thoại; Dịa chỉ; Số CMND".split(";");
+		tableModel = new DefaultTableModel(headers, 0);
+		add(scroll = new JScrollPane(table = new JTable(tableModel), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+		scroll.setPreferredSize(new Dimension(200, 0));
+		scroll.setBorder(BorderFactory.createTitledBorder("Danh sách"));
+		table.setRowHeight(20);
+		
+		btnThem.addActionListener(this);
+		btnSua.addActionListener(this);
+		btnXoa.addActionListener(this);
+		btnThoat.addActionListener(this);
+		btnThe.addActionListener(this);
+		btnluu.addActionListener(this);
+		table.addMouseListener(this);
+		//btnxoatrang.addActionListener(this);
+		database.getinstance().connect();
+		updatedasetable();
+		mokhoatextfield(false);
+		btnluu.setEnabled(false);
+		
+	}
+	
+
+	private void updatedasetable() {
+		// TODO Auto-generated method stub
+		danhsachkhachhang ds=new danhsachkhachhang();
+		List<khachhang> list=ds.doctubangkhachhang();
+		for(khachhang kh:list)
+		{
+			String [] rowdata= {kh.getMakhh(),kh.getHoten(),kh.getGioitinh(),kh.getSodt(),kh.getDiachi(),kh.getCmnd()};
+			tableModel.addRow(rowdata);
+			
+		}
+		table.setModel(tableModel);
+		
+		
+	}
+
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		AppKhachHang akh = new AppKhachHang();
+		akh.setVisible(true);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getSource();
+		
+		if(o.equals(btnThem))
+		{
+			if(btnThem.getText().equals("Thêm"))
+			{
+				mokhoatextfield(true);
+				mokhoacontrol(false);
+				btnluu.setEnabled(true);
+				btnThem.setEnabled(true);
+				xoarongactions();
+				btnThem.setText("Hủy");
+			}
+			else
+			{
+				if(btnThem.getText().equalsIgnoreCase("Hủy"))
+				{
+					mokhoatextfield(false);
+					mokhoacontrol(true);
+					btnluu.setEnabled(false);
+					btnThem.setText("Thêm");
+					xoarongactions();
+					txtmakh.setEditable(false);
+				}
+			}
+		}
+		else
+		{
+			if(o.equals(btnSua))
+			{
+				if(btnSua.getText().equalsIgnoreCase("Sửa"))
+				{
+					mokhoatextfield(true);
+					naplopkhachhangvaotextfield();
+					mokhoacontrol(false);
+					btnluu.setEnabled(true);
+					btnSua.setEnabled(true);
+					btnSua.setText("Hủy");
+					txtmakh.setEditable(false);
+				}
+				else
+				{
+					if(btnSua.getText().equalsIgnoreCase("Hủy"))
+					{
+						mokhoacontrol(true);
+						mokhoatextfield(false);
+						btnSua.setText("Sửa");
+						btnluu.setEnabled(false);
+						naplopkhachhangvaotextfield();
+					}
+				}
+			}
+			else {
+				if(o.equals(btnluu))
+				{
+					if(btnThem.getText().equalsIgnoreCase("Hủy"))
+					{
+						try {
+							if(dskhh.create(txtmakh.getText(),txtHoten.getText(),cboGioitinh.getSelectedItem().toString(),txtDienthoai.getText(),txtDiachi.getText(),txtsoCMND.getText()))
+								{
+									Object [] rowdata = {txtmakh.getText(),txtHoten.getText(),cboGioitinh.getSelectedItem().toString(),txtDienthoai.getText(),txtDiachi.getText(),txtsoCMND.getText()};
+									tableModel.addRow(rowdata);
+								
+									mokhoatextfield(false);
+									mokhoacontrol(true);
+									btnluu.setEnabled(false);
+									btnThem.setText("Thêm");
+									xoarongactions();
+									
+								}
+						} catch (Exception e2) {
+							// TODO: handle exception
+							JOptionPane.showMessageDialog(this,"ban nhap du lieu chua dung !xin nhap lai");
+							return ;
+						}
+					}
+					else if(btnSua.getText().equalsIgnoreCase("Hủy"))
+					{
+						int row=table.getSelectedRow();
+						if(row>=0)
+						{
+							try {
+								if(dskhh.update(txtmakh.getText(),txtHoten.getText(),cboGioitinh.getSelectedItem().toString(),txtDienthoai.getText(),txtDiachi.getText(),txtsoCMND.getText())) {
+									//table.setValueAt(txtmakh.getText(), row,1);
+									table.setValueAt(txtHoten.getText(), row,1);
+									table.setValueAt(cboGioitinh.getSelectedItem().toString(), row,2);
+									table.setValueAt(txtDienthoai.getText(), row,3);
+									table.setValueAt(txtDiachi.getText(), row,4);
+									table.setValueAt(txtsoCMND.getText(), row,5);
+								mokhoatextfield(false);
+								mokhoacontrol(true);
+								btnluu.setEnabled(false);
+								btnSua.setText("Sửa");
+								xoarongactions();
+									
+									
+								}
+								
+							} catch (Exception e2) {
+								// TODO: handle exception
+								JOptionPane.showMessageDialog(this,"ban nhap du lieu chua dung ! xin nhap lai");
+							}
+							
+						}
+					}
+				}
+				else if(o.equals(btnXoa))
+				{
+					int row =table.getSelectedRow();
+					if(row>=0)
+					{
+						String makh=(String) table.getValueAt(row, 0);
+						int hoinhac=JOptionPane.showConfirmDialog(this,"Bạn Có Chắc chắn xóa không","chú ý",JOptionPane.YES_NO_OPTION);
+						if(hoinhac==JOptionPane.YES_OPTION)
+							if(dskhh.delete(makh))
+							{
+								tableModel.removeRow(row);
+								xoarongactions();
+							}
+						}
+				}
+				
+			}
+			if(o.equals(btnThoat))
+			{
+				AppThueSach2 app=new AppThueSach2();
+				app.main(null);
+				setVisible(false);
+			}
+			if(o.equals(btnThe))
+			{
+
+				AppThe appt=new AppThe();
+				appt.main(null);
+				
+			}
+		}
+		
+	}
+
+	private void xoarongactions()
+	{
+		txtmakh.setText("");
+		txtHoten.setText("");
+		txtsoCMND.setText("");
+		txtDienthoai.setText("");
+		txtDiachi.setText("");
+		txtmakh.requestFocus();
+		//txtmakh.setEditable(true);
+	}
+	
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		int row=table.getSelectedRow();
+		txtmakh.setText(table.getValueAt(row, 0).toString());
+		txtHoten.setText(table.getValueAt(row, 1).toString());
+		cboGioitinh.setSelectedItem(table.getValueAt(row, 2).toString());
+		txtDienthoai.setText(table.getValueAt(row, 3).toString());
+		txtDiachi.setText(table.getValueAt(row, 4).toString());
+		txtsoCMND.setText(table.getValueAt(row, 5).toString());
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	private void naplopkhachhangvaotextfield()
+	{
+		int row=table.getSelectedRow();
+		try {
+			
+			txtmakh.setText((String) table.getValueAt(row, 0).toString());
+			txtHoten.setText((String) table.getValueAt(row, 1).toString());
+			cboGioitinh.setSelectedItem((String) table.getValueAt(row, 2).toString());
+			txtDienthoai.setText((String) table.getValueAt(row, 3).toString());
+			txtDiachi.setText((String) table.getValueAt(row, 4).toString());
+			txtsoCMND.setText((String)table.getValueAt(row, 5).toString());
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+		
+		
+	}
+	private void mokhoacontrol(boolean b)
+	{
+		btnThem.setEnabled(b);
+		btnXoa.setEnabled(b);
+		btnSua.setEnabled(b);
+		btnluu.setEnabled(b);
+		btnThoat.setEnabled(b);
+		btnThe.setEnabled(b);
+	}
+	private void mokhoatextfield(boolean b)
+	{
+		txtmakh.setEditable(b);
+		txtHoten.setEditable(b);
+		cboGioitinh.setEnabled(b);
+		txtDienthoai.setEditable(b);
+		txtDiachi.setEditable(b);
+		txtsoCMND.setEditable(b);
+		
+	}
+	public void exportExcel(JTable table) {
+		
+		
+		 JFileChooser chooser = new JFileChooser();
+		 
+		 int i = chooser.showSaveDialog(chooser);
+		 if (i == JFileChooser.APPROVE_OPTION) {
+			 File file = chooser.getSelectedFile();
+			 try {
+				 	FileWriter out = new FileWriter(file + ".xls");
+				 	BufferedWriter bwrite = new BufferedWriter(out);
+				 	DefaultTableModel model = (DefaultTableModel) table.getModel();
+				 	// ten Cot
+				 	
+				 	for (int j = 0; j < table.getColumnCount(); j++) {
+				 		bwrite.write(model.getColumnName(j) + "\t");
+				 		
+				 	}
+				 	bwrite.write("\n");
+				 	// Lay du lieu dong
+				 	
+				 	for (int j = 0; j < table.getRowCount(); j++) {
+				 		for (int k = 0; k < table.getColumnCount(); k++) {
+				 			bwrite.write(model.getValueAt(j, k) + "\t");
+				 		}
+				 		bwrite.write("\n");
+				 	}
+				 	bwrite.close();
+				 	
+				 	JOptionPane.showMessageDialog(null, "Lưu file thành công!");
+			 } catch (Exception e2) {
+				 JOptionPane.showMessageDialog(null, "lưu file thất bại");
+			 }
+		 	
+		 }
+		
+	}
+	public void thongke()
+	{
+		exportExcel(table);
+	}
+
+}

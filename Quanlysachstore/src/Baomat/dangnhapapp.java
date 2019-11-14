@@ -1,0 +1,154 @@
+package Baomat;
+
+import java.awt.BorderLayout;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+
+import GiaoDien.AppThueSach2;
+import database.database;
+
+
+
+
+
+public class dangnhapapp extends JFrame implements ActionListener{
+
+	JTextField txtUsername;
+	JPasswordField txtPassword;
+	
+	JButton btnDangnhap;
+	JButton btnXoatrang;
+	JButton btnThoat;
+	
+	public dangnhapapp() {
+		setTitle("Login Form");
+		setSize(360, 200);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
+		setLocationRelativeTo(null);
+		
+		JLabel lblTieude;
+		JPanel pnNorth = new JPanel();
+		add(pnNorth, BorderLayout.NORTH);
+		pnNorth.add(lblTieude = new JLabel("Đăng Nhập Hệ Thống"));
+		lblTieude.setFont(new Font("Arial", Font.BOLD, 25));
+		lblTieude.setForeground(Color.gray);
+		pnNorth.setBackground(Color.LIGHT_GRAY);
+		
+		JSeparator spt1;
+		pnNorth.add(spt1 = new JSeparator());
+		
+		JLabel lblUser, lblPass;
+		JPanel pnCenter = new JPanel();
+		add(pnCenter, BorderLayout.CENTER);
+		pnCenter.setLayout(null);
+		pnCenter.setBackground(Color.GRAY);
+		
+		pnCenter.add(lblUser = new JLabel("Username:"));
+		pnCenter.add(lblPass = new JLabel("Password:"));
+		
+		pnCenter.add(txtUsername = new JTextField());
+		pnCenter.add(txtPassword = new JPasswordField());
+		
+		lblUser.setBounds(45, 10, 80, 20);
+		lblPass.setBounds(45, 50, 80, 20);
+		
+		txtUsername.setBounds(120, 10, 200, 20);
+		txtPassword.setBounds(120, 50, 200, 20);
+		
+		pnCenter.add(btnDangnhap = new JButton("Đăng Nhập"));
+		pnCenter.add(btnXoatrang = new JButton("Xóa Trắng"));
+		pnCenter.add(btnThoat = new JButton("Thoát"));
+		
+		btnDangnhap.setBounds(30, 90, 100, 30);
+		btnXoatrang.setBounds(130, 90, 100, 30);
+		btnThoat.setBounds(230, 90, 100, 30);
+		
+		btnDangnhap.addActionListener(this);
+		btnXoatrang.addActionListener(this);
+		btnThoat.addActionListener(this);
+		
+		
+	}
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+			dangnhapapp dna = new dangnhapapp();
+			dna.setVisible(true);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getSource();
+		if(o.equals(btnDangnhap))
+			DangnhapAcsions();
+		if(o.equals(btnXoatrang))
+			XoatrangAcsions();
+		if(o.equals(btnThoat))
+			ThoatAcsions();
+		
+	}
+	private void XoatrangAcsions() {
+		// TODO Auto-generated method stub
+		txtUsername.setText("");
+		txtPassword.setText("");
+		txtUsername.requestFocus();
+	}
+	private void DangnhapAcsions() {
+	
+		database.getinstance().connect();
+			String sqlComand = "select * from nguoidung where tentaikh = ? and matkhau = ?";
+			Connection conn=database.getinstance().getconnection();
+			PreparedStatement pst;
+			try {
+				pst = conn.prepareStatement(sqlComand);
+				pst.setString(1, txtUsername.getText());
+				pst.setString(2, txtPassword.getText());
+				
+				ResultSet rs = pst.executeQuery();
+				
+				if(rs.next()) {
+					JOptionPane.showMessageDialog(null, "Dăng nhập thành công!");
+				
+
+						AppThueSach2 atcd2 = new AppThueSach2();
+						atcd2.main(null);
+						setVisible(false);
+				}else {
+					JOptionPane.showMessageDialog(null, "Dăng nhập thất bại!");
+					txtUsername.setText("");
+					txtPassword.setText("");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+
+	}
+	private void ThoatAcsions() {
+		// TODO Auto-generated method stub
+		setVisible(false);
+		//setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+
+}

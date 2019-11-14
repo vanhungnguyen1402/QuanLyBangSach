@@ -1,0 +1,465 @@
+package thongtinnhanvien;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+
+import com.toedter.calendar.JDateChooser;
+
+import GiaoDien.AppThueSach2;
+import database.database;
+
+
+
+public class displaynhanvien extends JFrame implements ActionListener, MouseListener{
+
+	private String [] s = {"Nam", "Nữ"};
+	 private JTextField txtmanv,txthoten,txttienluong,txtchucvu,txtsodt,txtdiachi;
+	 private JDateChooser txtngaysinh;
+	private JComboBox cboGioitinh;
+	private JButton btnThem, btnSua, btnXoa, btnThoat,btnluu,btnxoatrang;
+	
+	JTable table;
+	DefaultTableModel tableModel;
+	private ArrayList<nhanvien> list;
+	danhsachnhanvien dsnv=new danhsachnhanvien();
+	public displaynhanvien() {
+		setTitle("App Quản lí Nhân Viên");
+		setBounds(180, 40,1000,650);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		//setResizable(false);
+		setLocationRelativeTo(null);
+		
+		JLabel lblTieude;
+		JPanel pnNorth = new JPanel();
+		add(pnNorth, BorderLayout.NORTH);
+		pnNorth.add(lblTieude = new JLabel("THÔNG TIN NHÂN VIÊN"));
+		lblTieude.setFont(new Font("Arial", Font.BOLD, 30));
+		lblTieude.setForeground(Color.BLACK);
+		pnNorth.setBackground(Color.LIGHT_GRAY);
+		
+		
+JLabel lblmanv,lblhoten,lblngaysinh,lbltienluong,lblchucvu,lblsodt,lbldiachi,lblgioitinh;
+
+		JPanel pnCenter = new JPanel();
+		add(pnCenter, BorderLayout.CENTER);
+		
+		//pnCenter.setPreferredSize(new Dimension(300,0));
+		pnCenter.setBorder(BorderFactory.createTitledBorder("Thông tin chi tiết"));
+		
+		pnCenter.add(lblmanv=new JLabel("Mã Nhân vien:",JLabel.RIGHT));  pnCenter.add(txtmanv=new JTextField());
+		pnCenter.add(lblhoten = new JLabel("Họ và tên: ",JLabel.RIGHT));			pnCenter.add(txthoten = new JTextField());
+		pnCenter.add(lblgioitinh = new JLabel("Giới tính: ",JLabel.RIGHT));			pnCenter.add(cboGioitinh = new JComboBox(s));
+		pnCenter.add(lblsodt = new JLabel("Số điện thoại: ",JLabel.RIGHT));		pnCenter.add(txtsodt = new JTextField());
+		pnCenter.add(lbldiachi = new JLabel("Dịa chỉ: ",JLabel.RIGHT));				pnCenter.add(txtdiachi = new JTextField());
+		pnCenter.add(lblngaysinh = new JLabel("Ngày Sinh: ",JLabel.RIGHT));		pnCenter.add(txtngaysinh =new JDateChooser());
+		pnCenter.add(lblchucvu = new JLabel("Chức Vụ: ",JLabel.RIGHT));				pnCenter.add(txtchucvu = new JTextField());
+		pnCenter.add(lbltienluong=new JLabel("Tiền Lương",JLabel.RIGHT));			pnCenter.add(txttienluong=new JTextField());
+
+		txtngaysinh.setDateFormatString("dd-MM-yyyy");
+		lblmanv.setBounds(20,20,90,25);                            txtmanv.setBounds(110, 20, 250, 25);
+		lblhoten.setBounds(20, 60, 90, 25);							txthoten.setBounds(110, 60, 250, 25);
+		lblgioitinh.setBounds(20, 100, 90, 25);						cboGioitinh.setBounds(110, 100, 80, 25);
+		lblsodt.setBounds(400, 100, 100, 25);						txtsodt.setBounds(500, 100, 250, 25);
+		lbldiachi.setBounds(20, 180, 90, 25);						txtdiachi.setBounds(110, 180, 640, 25);
+		lblngaysinh.setBounds(400, 20,85, 25);						txtngaysinh.setBounds(500, 20, 250, 25);
+		lblchucvu.setBounds(400, 60, 100, 25);							txtchucvu.setBounds(500, 60, 250, 25);
+		lbltienluong.setBounds(20, 140, 90, 25);                     txttienluong.setBounds(110, 140, 640, 25);
+		
+		//int x=130,y=180,width=200,height=40;
+		JPanel pnmenu=new JPanel();
+		pnmenu.setBounds(110,230,640, 70);
+		pnmenu.setPreferredSize(new Dimension(0,100));
+		pnmenu.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY),"Chọn Tác Vụ"));
+		pnCenter.add(pnmenu);
+
+		pnmenu.add(btnThem=new JButton("Thêm",new ImageIcon("K:\\qlbangsach\\Quanlysachstore\\them.PNG")));
+//		btnThem.setBounds(x, y, width, height);
+//		x+=85;
+		pnmenu.add(btnluu=new JButton("Lưu",new ImageIcon("K:\\qlbangsach\\Quanlysachstore\\luu.PNG")));
+		pnmenu.add(btnSua=new JButton("Sửa",new ImageIcon("K:\\qlbangsach\\Quanlysachstore\\capnhat.PNG")));
+//		btnSua.setBounds(x, y, width, height);
+//		x+=85;
+		pnmenu.add(btnXoa=new JButton("Xóa",new ImageIcon("K:\\qlbangsach\\Quanlysachstore\\xoa.PNG")));
+		
+//		btnXoa.setBounds(x, y, width, height);
+//		x+=85;
+		
+//		btnluu.setBounds(x, y, width, height);
+//		x=+85;
+		pnmenu.add(btnThoat=new JButton("Thoát",new ImageIcon("K:\\qlbangsach\\Quanlysachstore\\thoat.PNG")));
+//		btnThoat.setBounds(x, y, width, height);
+		
+		
+		JPanel pneast=new JPanel();
+		pneast.setPreferredSize(new Dimension(230,0));
+		//pneast.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.red)));
+		add(pneast,BorderLayout.EAST);
+		
+		JLabel lblanh=new JLabel();
+		lblanh.setLayout(null);
+		lblanh.setBounds(0, 0,330,300);
+		try {
+			BufferedImage image= ImageIO.read(new File("K:\\qlbangsach\\Quanlysachstore\\nhanvien.jpg"));
+			int x=lblanh.getSize().width;
+			int y=lblanh.getSize().height;
+			int ix=image.getWidth();
+			int iy=image.getHeight();
+			int dx=0;
+			int dy=0;
+			if(x / y > ix / iy)
+			{
+				dy=y;
+				dx=dy * ix / iy;
+				
+			}
+			else {
+				dx=x;
+				dy=dx * iy / ix;
+			}
+			ImageIcon icon=new ImageIcon(image.getScaledInstance(dx, dy,image.SCALE_SMOOTH));
+			lblanh.setIcon(icon);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		pneast.add(lblanh);
+		
+		
+
+		
+		pnCenter.setLayout(null);
+		
+
+		
+		JScrollPane scroll;
+		String [] headers = "Mã NV ;Họ tên;Giới Tính;Ngày Sinh;Tiền Lương;Chức Vụ;Số DT;Địa Chỉ".split(";");
+		tableModel = new DefaultTableModel(headers, 0);
+		add(scroll = new JScrollPane(table = new JTable(tableModel), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.SOUTH);
+		scroll.setPreferredSize(new Dimension(0, 250));
+		scroll.setBorder(BorderFactory.createTitledBorder("Danh sách"));
+		table.setRowHeight(20);
+		
+		btnThem.addActionListener(this);
+		btnSua.addActionListener(this);
+		btnXoa.addActionListener(this);
+		btnThoat.addActionListener(this);
+		btnluu.addActionListener(this);
+		//btnxoatrang.addActionListener(this);
+		table.addMouseListener(this);
+		
+		database.getinstance().connect();
+		updatetabledata();
+		mokhoatextfield(false);
+		btnluu.setEnabled(false);
+	}
+	
+	private void updatetabledata() {
+		danhsachnhanvien ds=new danhsachnhanvien();
+		List<nhanvien> list=ds.doctubangnhanvien();
+		for(nhanvien nv:list)
+		{
+			Object [] rowdata= {nv.getManv(),nv.getHoten(),nv.getGioitinh(),nv.getNgaysinh() ,nv.getTienluong(),nv.getChucvu(),nv.getSodt(),nv.getDiachi()};
+			tableModel.addRow(rowdata);
+		}
+		table.setModel(tableModel);
+		
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		displaynhanvien aqlnd = new displaynhanvien();
+		aqlnd.setVisible(true);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object o=e.getSource();
+		if(o.equals(btnThem))
+		{
+			if(btnThem.getText().equals("Thêm"))
+			{
+				mokhoatextfield(true);
+				mokhoacontrol(false);
+				btnluu.setEnabled(true);
+				btnThem.setEnabled(true);
+				xoatongactions();
+				btnThem.setText("Hủy");
+			}
+			else
+			{
+				if(btnThem.getText().equalsIgnoreCase("Hủy"))
+				{
+					mokhoatextfield(false);
+					mokhoacontrol(true);
+					btnluu.setEnabled(false);
+					btnThem.setText("Thêm");
+					xoatongactions();
+					txtmanv.setEditable(false);
+				}
+			}
+		}
+		else
+		{
+			if(o.equals(btnSua))
+			{
+				if(btnSua.getText().equalsIgnoreCase("Sửa"))
+				{
+					mokhoatextfield(true);
+					naplopnguoidungvaotextfield();
+					mokhoacontrol(false);
+					btnluu.setEnabled(true);
+					btnSua.setEnabled(true);
+					btnSua.setText("Hủy");
+					txtmanv.setEditable(false);
+					
+				}
+				else
+				{
+					if(btnSua.getText().equalsIgnoreCase("Hủy"))
+					{
+						mokhoacontrol(true);
+						mokhoatextfield(false);
+						btnSua.setText("Sửa");
+						btnluu.setEnabled(false);
+						naplopnguoidungvaotextfield();
+						xoatongactions();
+					}
+				}
+			}
+			else
+				if(o.equals(btnluu))
+				{
+					if(btnThem.getText().equalsIgnoreCase("Hủy"))
+					{
+						try {
+							if(dsnv.create(txtmanv.getText(),txthoten.getText(),cboGioitinh.getSelectedItem().toString(), txtngaysinh.getDate(),Float.parseFloat(txttienluong.getText()),txtchucvu.getText(),txtsodt.getText(),txtdiachi.getText()))
+								{
+									Object [] rowdata= {txtmanv.getText(),txthoten.getText(),cboGioitinh.getSelectedItem().toString(),((JTextField)txtngaysinh.getDateEditor().getUiComponent()).getText(),Float.parseFloat(txttienluong.getText()),txtchucvu.getText(),txtsodt.getText(),txtdiachi.getText()};
+									tableModel.addRow(rowdata);
+									mokhoatextfield(false);
+									mokhoacontrol(true);
+									btnluu.setEnabled(false);
+									btnThem.setText("Thêm");
+									xoatongactions();
+								}
+							
+						} catch (Exception e2) {
+							// TODO: handle exception
+							JOptionPane.showMessageDialog(this,"bạn nhập dũ liệu chưa đúng !xin nhập lại");
+							e2.printStackTrace();
+						}
+					}
+					else
+					
+						if(btnSua.getText().equalsIgnoreCase("Hủy"))
+						{
+							int row=table.getSelectedRow();
+							if(row>=0)
+							{
+								try {
+									if(dsnv.update(txtmanv.getText(),txthoten.getText(),cboGioitinh.getSelectedItem().toString(),txtngaysinh.getDate(),Float.parseFloat(txttienluong.getText()),txtchucvu.getText(),txtsodt.getText(),txtdiachi.getText()))
+									{
+										
+										table.setValueAt(txthoten.getText(), row,1);
+										table.setValueAt(cboGioitinh.getSelectedItem().toString(), row,2);
+										table.setValueAt(((JTextField)txtngaysinh.getDateEditor().getUiComponent()).getText(), row,3);
+										table.setValueAt(Float.parseFloat(txttienluong.getText()), row,4);
+										table.setValueAt(txtchucvu.getText(), row,5);
+										
+										table.setValueAt(txtsodt.getText(), row,6);
+										table.setValueAt(txtdiachi.getText(), row,7);
+										mokhoatextfield(false);
+										mokhoacontrol(true);
+										btnluu.setEnabled(false);
+										btnSua.setText("Sửa");
+										xoatongactions();
+									}
+									
+								} catch (Exception e2) {
+									// TODO: handle exception
+									JOptionPane.showMessageDialog(this,"bạn nhập dữ liệu chưa đúnng ! xin nhập lại");
+								}
+								
+							}
+						}
+					
+					
+				}
+				else
+					if(o.equals(btnXoa))
+					{
+						int row=table.getSelectedRow();
+						if(row>=0)
+						{
+							String mannv=(String) table.getValueAt(row, 0);
+							int hoinhac=JOptionPane.showConfirmDialog(this,"Bạn Có Chắc chắn xóa không","chú ý",JOptionPane.YES_NO_OPTION);
+							if(hoinhac==JOptionPane.YES_OPTION)
+							if(dsnv.delete(mannv))
+							{
+								tableModel.removeRow(row);
+								xoatongactions();
+							}
+						}
+					}
+			
+		}
+		if(o.equals(btnThoat))
+		{
+			AppThueSach2 app=new AppThueSach2();
+			app.main(null);
+			setVisible(false);
+			
+		}
+		
+	}
+	private void xoatongactions() {
+		txtmanv.setText("");
+		txthoten.setText("");
+		txtngaysinh.setToolTipText("");
+		txtdiachi.setText("");
+		txttienluong.setText("");
+		txtchucvu.setText("");
+		txtsodt.setText("");
+		txttienluong.setText("");
+		txtdiachi.setText("");
+	}
+
+	
+	
+
+	
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+		int row=table.getSelectedRow();
+		txtmanv.setText(table.getValueAt(row, 0).toString());
+		txthoten.setText(table.getValueAt(row, 1).toString());
+		cboGioitinh.setSelectedItem(table.getValueAt(row, 2).toString());
+		
+//		txtngaysinh.setToolTipText(table.getValueAt(row, 3).toString());
+		java.util.Date date;
+		try {
+			date=new SimpleDateFormat("yyyy-MM-dd").parse((String)table.getValueAt(row,3).toString());
+			txtngaysinh.setDate(date);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+		txttienluong.setText(table.getValueAt(row, 4).toString());
+		
+		txtchucvu.setText(table.getValueAt(row, 5).toString());
+		txtsodt.setText(table.getValueAt(row, 6).toString());
+		txtdiachi.setText(table.getValueAt(row, 7).toString());
+		
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	private void naplopnguoidungvaotextfield()
+	{
+		int row=table.getSelectedRow();
+		try {
+			txtmanv.setText(table.getValueAt(row, 0).toString());
+			txthoten.setText(table.getValueAt(row, 1).toString());
+			cboGioitinh.setSelectedItem((String)table.getValueAt(row, 2).toString());
+			java.util.Date date;
+			try {
+				date=new SimpleDateFormat("yyyy-MM-dd").parse((String)table.getValueAt(row,3).toString());
+				txtngaysinh.setDate(date);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			txttienluong.setText(table.getValueAt(row, 4).toString());
+			
+			txtchucvu.setText(table.getValueAt(row, 5).toString());
+			txtsodt.setText(table.getValueAt(row, 6).toString());
+			txtdiachi.setText(table.getValueAt(row, 7).toString());
+			
+			
+		} catch (Exception e) {
+		
+//			JOptionPane.showMessageDialog(this,"bạn cần chọn dòng cần sửa !");
+			return ;
+			// TODO: handle exception
+		}
+		
+	}
+	private void mokhoacontrol(boolean b)
+	{
+		btnThem.setEnabled(b);
+		btnluu.setEnabled(b);
+		btnSua.setEnabled(b);
+		btnXoa.setEnabled(b);
+		btnThoat.setEnabled(b);
+		
+	}
+	private void mokhoatextfield(boolean b)
+	{
+		txtmanv.setEditable(b);
+		txthoten.setEditable(b);
+		cboGioitinh.setEnabled(b);
+		txtngaysinh.setEnabled(b);
+		txttienluong.setEditable(b);
+		txtchucvu.setEditable(b);
+		
+		txtsodt.setEditable(b);
+		txtdiachi.setEditable(b);
+		
+	}
+
+}

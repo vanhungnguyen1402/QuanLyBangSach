@@ -1,0 +1,93 @@
+package Bangsach;
+
+public class dia {
+	private String macd;
+	private String tencd;
+	private String theloai;
+	private String hansx;
+	private double giathue;
+	private String ghichu;
+	public dia(String macd, String tencd, String theloai, String hansx, double giathue, String ghichu) {
+		super();
+		this.macd = macd;
+		this.tencd = tencd;
+		this.theloai = theloai;
+		this.hansx = hansx;
+		this.giathue = giathue;
+		this.ghichu = ghichu;
+	}
+	public dia(String macd) {
+		this(macd,"","","",0.0,"");
+	}
+	public dia() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public String getMacd() {
+		return macd;
+	}
+	public void setMacd(String macd) {
+		this.macd = macd;
+	}
+	public String getTencd() {
+		return tencd;
+	}
+	public void setTencd(String tencd) {
+		this.tencd = tencd;
+	}
+	public String getTheloai() {
+		return theloai;
+	}
+	public void setTheloai(String theloai) {
+		this.theloai = theloai;
+	}
+	public String getHansx() {
+		return hansx;
+	}
+	public void setHansx(String hansx) {
+		this.hansx = hansx;
+	}
+	public double getGiathue() {
+		return giathue;
+	}
+	public void setGiathue(double giathue) {
+		this.giathue = giathue;
+	}
+	public String getGhichu() {
+		return ghichu;
+	}
+	public void setGhichu(String ghichu) {
+		this.ghichu = ghichu;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((macd == null) ? 0 : macd.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		dia other = (dia) obj;
+		if (macd == null) {
+			if (other.macd != null)
+				return false;
+		} else if (!macd.equals(other.macd))
+			return false;
+		return true;
+	}
+	@Override
+	public String toString() {
+		return  macd + ";" + tencd + ";" + theloai + ";" + hansx + ";"
+				+ giathue + ";" + ghichu;
+	}
+	
+	
+
+}

@@ -1,0 +1,124 @@
+package khachhang;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import Bangsach.sach;
+import database.database;
+
+public class danhsachkhachhang {
+	ArrayList<khachhang> dskhah;
+	khachhang khachh;
+
+	
+	 public danhsachkhachhang() {
+		// TODO Auto-generated constructor stub
+		dskhah=new ArrayList<khachhang>();
+		khachh=new khachhang();
+	}
+	
+	public ArrayList<khachhang> doctubangkhachhang() {
+		
+		Connection con=database.getinstance().getconnection();
+		String sql="select *from khachhang";
+		Statement statement;
+		try {
+			statement = con.createStatement();
+			ResultSet rs=statement.executeQuery(sql);
+			while(rs.next())
+			{
+				String makhh=rs.getString(1);
+				String tenkhh=rs.getString(2);
+				String gioitinh=rs.getString(3);
+				String sodt=rs.getString(4);
+				String diachi=rs.getString(5);
+				String cmnd=rs.getString(6);
+				khachhang kh=new khachhang(makhh, tenkhh, gioitinh, sodt, diachi, cmnd);
+				dskhah.add(kh);
+				
+				
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return dskhah;
+		
+
+	}
+	public boolean create(String makhh,String tenkh,String gioitinh,String sodt,String diachi,String cmnd)
+	{
+		Connection con=database.getinstance().getconnection();
+		PreparedStatement stmt=null;
+		int n=0;
+		try {
+			stmt=con.prepareStatement("insert into khachhang values(?,?,?,?,?,?)");
+			stmt.setString(1,makhh);
+			stmt.setString(2, tenkh);
+			stmt.setString(3, gioitinh);
+			stmt.setString(4,sodt);
+			stmt.setString(5,diachi);
+			stmt.setString(6,cmnd);
+	
+		n=stmt.executeUpdate();
+		
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return n>0;
+	}
+	public boolean update(String makhh,String tenkh,String gioitinh,String sodt,String diachi,String cmnd)
+	{
+		Connection con=database.getinstance().getconnection();
+		PreparedStatement stmt=null;
+		int n=0;
+		try {
+			stmt=con.prepareStatement("UPDATE khachhang SET"
+				
+					+ "  hoten = ?, "
+					+ " gioitinh =?, "
+					+ " sodt =?, "
+					+ " diachi =?, "
+					+ " cmnd =? "
+					+ " WHERE makhh =? ");
+			
+			stmt.setString(1, tenkh);
+			stmt.setString(2, gioitinh);
+			stmt.setString(3,sodt);
+			stmt.setString(4, diachi);
+			stmt.setString(5,cmnd);
+			stmt.setString(6,makhh);
+			
+			n=stmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return n>0;
+	}
+	public boolean delete(String makhh)
+	{
+		Connection con=database.getinstance().getconnection();
+		PreparedStatement stmt=null;
+		int n=0;
+		try {
+			stmt=con.prepareStatement("delete from khachhang where makhh=?");
+			stmt.setString(1,makhh);
+			n=stmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return n>0;
+	}
+	
+
+
+}

@@ -1,0 +1,127 @@
+package Bangsach;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import Quanlinguoidung.nguoidung;
+import database.database;
+
+public class danhsachdia {
+	ArrayList<dia> dsdia;
+		dia dd;
+	
+		
+		public danhsachdia()
+		{
+			dsdia=new ArrayList<dia>();
+			dd=new dia();
+		}
+		public ArrayList<dia> doctubangdia() {
+			
+			Connection con=database.getinstance().getconnection();
+			String sql="select *from bangdia";
+			Statement statement;
+			try {
+				statement = con.createStatement();
+				ResultSet rs=statement.executeQuery(sql);
+				while(rs.next())
+				{
+					String macd=rs.getString(1);
+					String tencd=rs.getString(2);
+					String theloai=rs.getString(3);
+					String hansx=rs.getString(4);
+					Double giathue=rs.getDouble(5);
+					String ghichu=rs.getString(6);
+					dia d=new dia(macd, tencd, theloai, hansx, giathue, ghichu);
+					dsdia.add(d);
+					
+					
+					
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return dsdia;
+			
+
+		}
+		
+		public boolean create(String macd,String tencd,String theloai,String hansx,double giathue,String ghichu)
+		{
+			Connection con=database.getinstance().getconnection();
+			PreparedStatement stmt=null;
+			int n=0;
+			try {
+				stmt=con.prepareStatement("insert into bangdia values(?,?,?,?,?,?)");
+				stmt.setString(1,macd);
+				stmt.setString(2, tencd);
+				stmt.setString(3, theloai);
+				stmt.setString(4,hansx);
+				stmt.setDouble(5,giathue);
+				stmt.setString(6,ghichu);
+		
+			n=stmt.executeUpdate();
+			
+			
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return n>0;
+		}
+		public boolean update(String macd,String tencd,String theloai,String hansx,double giathue,String ghichu)
+		{
+			Connection con=database.getinstance().getconnection();
+			PreparedStatement stmt=null;
+			int n=0;
+			try {
+				stmt=con.prepareStatement("UPDATE bangdia SET"
+					
+						+ " tencd =?, "
+						+ " theloai =?, "
+						+ " hansx =?, "
+						+ " giathue =?, "
+						+ " ghichu = ? "
+						+ " WHERE macd = ? ");
+				
+				stmt.setString(1, tencd);
+				stmt.setString(2, theloai);
+				stmt.setString(3,hansx);
+				stmt.setDouble(4, giathue);
+				stmt.setString(5,ghichu);
+				stmt.setString(6,macd);
+				
+				n=stmt.executeUpdate();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return n>0;
+		}
+		public boolean delete(String macd)
+		{
+			Connection con=database.getinstance().getconnection();
+			PreparedStatement stmt=null;
+			int n=0;
+			try {
+				stmt=con.prepareStatement("delete from bangdia where macd=?");
+				stmt.setString(1,macd);
+				n=stmt.executeUpdate();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return n>0;
+		}
+		
+		
+
+	}
+
+
+

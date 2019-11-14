@@ -1,0 +1,118 @@
+package khachhangmuon;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+
+import Bangsach.danhsachsach;
+import Bangsach.dia;
+import database.database;
+
+public class timkhachhangmuon extends JFrame implements ActionListener{
+	private JButton btnsearch,btnexit;
+	private ArrayList<khachhangmuon> list;
+	private JTable table;
+	private DefaultTableModel tablemodel;
+	danhsachkhachhangmuon dskhm=new danhsachkhachhangmuon();
+	private JLabel lbltimma;
+	private JTextField txttim;
+	public timkhachhangmuon()
+	{
+		setTitle("thông tin khách hàng mượn");
+		setBounds(300, 200,900,400);
+		JPanel pnnourth=new JPanel();
+		pnnourth.setPreferredSize(new Dimension(0, 100));
+		pnnourth.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.red),"tìm theo mã khách hàng mượn"));
+		int x=50,y=40,width=100,height=30;
+		pnnourth.add(txttim=new JTextField());
+		txttim.setBounds(x, y, 200, height);
+		x+=210;
+		pnnourth.add(btnsearch=new JButton("Search",new ImageIcon("tim.png")));
+		btnsearch.setBounds(x, y, 120, height);
+		x+=130;
+		pnnourth.add(btnexit=new JButton("Exit",new ImageIcon("thoat.png")));
+		btnexit.setBounds(x, y, width, height);
+		add(pnnourth,BorderLayout.NORTH);
+		pnnourth.setLayout(null);
+		
+		Box b=Box.createVerticalBox();
+		Box b1;
+//		JPanel pnsouth=new JPanel();
+		b.setPreferredSize(new Dimension(0,320));
+		b.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.RED),"Danh sách các khách hàng mượn"));
+		
+		
+		b.add(b1=Box.createHorizontalBox());
+		b.add(Box.createVerticalStrut(10));
+		String [] headers = "Mã khách hàng mượn;Số Phiếu; Ngày Thuê; Ma thẻ; Mã Băng Đĩa;Tên băng Đĩa;Thể Loại;Tình trạng thẻ; Số Lượng;Số ngày Mượn;Đơn giá".split(";");
+		tablemodel =new DefaultTableModel(headers, 0);
+		JScrollPane scroll=new JScrollPane();
+		scroll.setViewportView(table=new JTable(tablemodel));
+		table.setRowHeight(25);
+		table.setAutoCreateRowSorter(true);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		
+		b1.add(scroll);
+		add(b,BorderLayout.CENTER);
+		btnsearch.addActionListener(this);
+		btnexit.addActionListener(this);
+		
+		database.getinstance().connect();
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		new timkhachhangmuon().setVisible(true);
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object o=e.getSource();
+		if(o.equals(btnexit))
+		{
+			AppkhachhangM app=new AppkhachhangM();
+			app.main(null);
+			setVisible(false);
+		}
+		else
+		{
+			if(o.equals(btnsearch))
+			{
+				String macd=txttim.getText();
+				danhsachkhachhangmuon ds=new danhsachkhachhangmuon();
+				List<khachhangmuon> list=ds.doctubangkhachhangmuon();
+				for(khachhangmuon kh:list)
+				{
+					if(kh.getMakhhm().equalsIgnoreCase(macd))
+					{
+						Object [] rowdata= {kh.getMakhhm(),kh.getSophieu(),kh.getNgaythue(),kh.getMathe(),kh.getMabangdia(),kh.getTenbangdia(),kh.getTheloai(),kh.getTinhtrang(),kh.getSoluong(),kh.getSongaymuon(),kh.getDongia()};
+						tablemodel.addRow(rowdata);
+					}
+					
+				}
+			}
+		}
+		
+	}
+
+}
